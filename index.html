@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<head>
+<title>Puppy image gallery</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="assets/styles/site.css">
+</head>
+
+<body>
+<header class="site-header">
+  <h1>Puppy image gallery</h1>
+  <blockquote class="site-header__quote">
+    <p>A dog will teach you unconditional love. If you can have that in your life, things won't be too bad.</p>
+    <cite>&mdash;Robert Wagner</cite> </blockquote>
+</header>
+<div class="container">
+  <div id="thumbnails"> </div>
+</div>
+<footer></footer>
+<footer class="site-footer">
+  <p>Built by a wonderful developer for Asana.</p>
+</footer>
+<div id="lightBox">
+  <div id="lightBoxPhoto"><img src="#" />
+    <div id="lightBoxCaption">Caption</div>
+  </div>
+  <div id="lightBoxCaptionClose">X</div>
+</div>
+</body>
+
+<script>
+$(document).ready(function() {
+	
+	//CLOSE LIGHTBOX
+	$("#lightBox").click(function(){
+			
+			//don't close lightbox if image is clicked
+		  if (event.target.nodeName != "IMG"){
+				$("#lightBox").fadeOut(500);
+				$("#lightBoxPhoto img").attr("src","");
+				$("#lightBoxCaption").hide();
+			}
+	});
+	
+	//GET JSON
+	$.getJSON("assets/data/dogs.json", function(data) {    				
+			
+			//populate thumbnails
+			for (i = 0; i < data.dogs.length; i++) { 
+		
+				var $imageNumber = data.dogs[i].image;
+				var $imageCaption = data.dogs[i].caption;
+				$("#thumbnails").append('<div class="thumb"><img src="assets/images/thumbnails/'+$imageNumber+'" alt="'+$imageCaption+'"</div>');
+			};
+			
+			//open lightbox
+			$(".thumb img").click(function(){
+				$targetSrc = $(this).attr("src");
+				$targetSrc = $targetSrc.replace("thumbnails", "photos");
+
+				$targetCaption = $(this).attr("alt");
+				$("#lightBoxPhoto img").attr("src",$targetSrc);
+				$("#lightBoxCaption").text($targetCaption);
+				var $photoHeight = $("#lightBoxPhoto img").height();
+					
+				$("#lightBox").fadeIn( 500, function() {
+        	var $photoHeight = $("#lightBoxPhoto img").height();
+          var $photoTop = $("#lightBoxPhoto img").position().top;
+					$("#lightBoxCaption").css("top",($photoHeight+$photoTop+10));
+					$("#lightBoxCaption").fadeIn(300);
+  			});
+			});
+	});
+});
+</script>
+
+</html>
